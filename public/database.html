@@ -99,7 +99,7 @@ function getPosts(option){
     $('.posts').empty();
     dataList.forEach(function(data){
       console.log(data)
-      var post = $('<div class="post">');
+      var post = $('<div class="post text-center">');
       var user = $('<div class="user">').append('Charity Name: ', data.charity_name);
       var title = $('<div class="title">').append('Location: ', data.city+", "+data.state);
       
