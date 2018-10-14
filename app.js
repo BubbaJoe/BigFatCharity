@@ -4,7 +4,6 @@ const mongoose = require('mongoose');
 const http = require('http');
 const nconf = require('nconf');
 const express = require('express');
-const url = require("url")
 
 var app = express()
 // Read in keys and secrets. Using nconf use can set secrets via
@@ -23,7 +22,7 @@ let uri = `mongodb://${host}:${port}`;
 if (nconf.get('mongoDatabase')) {
   uri = `${uri}/${nconf.get('mongoDatabase')}`;
 }
-var db, ips, chrt, state_data, rank;
+var db, charities, contributions, rankings, overall_score, quality_rank;
 mongoose.connect(uri, function(err) {
     if(err) throw err;
     else console.log("connected to",uri)
@@ -35,16 +34,17 @@ mongoose.connect(uri, function(err) {
     //Bind connection to error event (to get notification of connection errors)
     db.on('error', console.error.bind(console, 'MongoDB connection error:'));
     // init collections
-    ips = db.collection('IPs');
-    chrt = db.collection('charities');
-    state_data = db.collection('state_data');
-    rank = db.collection('rank');
+    charities = db.collection('charities');
+    contributions = db.collection('contributions');
+    overall_score = db.collection('overall_score');
+    rankings = db.collection('rankings');
+    quality_rank = db.collection('quality_rank')    
 });
 //charities
 app.get("/get/charities",function(req, res) {
     let search = req.query.organization_type,
     op = (search)?{organization_type : {$regex : ".*"+search+".*", $options : 'i'}}:{};
-    chrt.find(op, function(err, data) {
+    charities.find(op, function(err, data) {
         if (err) {
             res.status(500);
             res.send('Im sorry bruh! we fkd up');
@@ -58,11 +58,62 @@ app.get("/get/charities",function(req, res) {
         }
     })
 })
+app.get("/get/quality/:type",function(req, res) {
+    let op = {_id: false, state: true};
+    op[req.params.type] = true;
+    quality_rank.find({}, op, function(err, data) {
+        if (err) {
+            res.status(500);
+            res.send('Im sorry bruh! we fkd up');
+        } else {
+            var r = data.toArray().then((d) => {
+                res.status(200)
+                res.set('Content-Type', 'application/json');
+                res.send(JSON.stringify(d))
+                res.end()
+            });
+        }
+    })
+})
+app.get("/get/rankings/:type",function(req, res) {
+    let op = {_id: false, state: true};
+    op[req.params.type] = true;
+    rankings.find({}, op, function(err, data) {
+        if (err) {
+            res.status(500);
+            res.send('Im sorry bruh! we fkd up');
+        } else {
+            var r = data.toArray().then((d) => {
+                res.status(200)
+                res.set('Content-Type', 'application/json');
+                res.send(JSON.stringify(d))
+                res.end()
+            });
+        }
+    })
+})
+app.get("/get/overall_score/:type",function(req, res) {
+    let op = {_id: false, state: true};
+    op[req.params.type] = true;
+    overall_score.find({}, op, function(err, data) {
+        if (err) {
+            res.status(500);
+            res.send('Im sorry bruh! we fkd up');
+        } else {
+            var r = data.toArray().then((d) => {
+                res.status(200)
+                res.set('Content-Type', 'application/json');
+                res.send(JSON.stringify(d))
+                res.end()
+            });
+        }
+    })
+})
 // Get Mongoose to use the global promise library
 app.get("/get/:state_type",function(req, res) {
     let op = {_id: false, state: true};
     op[req.params.state_type] = true;
-    state_data.find({}, op,  function(err, data) {
+    contributions.find({}, op,  function(err, data) {
         if (err) {
             res.status(500);
             res.send('Im sorry bruh! we fkd up');
@@ -78,7 +129,7 @@ app.get("/get/:state_type",function(req, res) {
 })
 
 app.get("/get/state_id/:state",function(req, res) {
-    chrt.find({state:req.params.state.toUpperCase()}, function(err, data) {
+    charities.find({state:req.params.state.toUpperCase()}, function(err, data) {
         if (err) {
             res.status(500);
             res.send('Im sorry bruh! we fkd up');
@@ -97,24 +148,8 @@ app.post("/", function(req, res) {
 
 })
 
-app.get("/get/ranking",function(req, res) {
-    rank.find({}, function(err, data) {
-        if (err) {
-            res.status(500);
-            res.send('Im sorry bruh! we fkd up');
-        } else {
-            var r = data.toArray().then((d) => {
-                res.status(200)
-                res.set('Content-Type', 'application/json');
-                res.send(JSON.stringify(d))
-                res.end()
-            });
-        }
-    })
-})
-
 app.get("/get/state_acc",function(req, res) {
-    var a = chrt.find({},{ "_id":0, "accountability_score":1, "state":1}).toArray().then((d) => {
+    var a = charities.find({},{ "_id":0, "accountability_score":1, "state":1}).toArray().then((d) => {
         res.status(200)
         res.set('Content-Type', 'application/json');
         res.send(JSON.stringify(d))
@@ -136,7 +171,7 @@ app.get("/get/state_acc",function(req, res) {
 })
 
 app.get("/get/states",function(req, res) {
-    chrt.find({}, function(err, data) {
+    charities.find({}, function(err, data) {
         if (err) {
             res.status(500);
             res.send('Im sorry bruh! we fkd up');

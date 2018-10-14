@@ -80,8 +80,12 @@
           <option value="rank">Rank of Condition</option>
       </select>
       <select style="width:50%"  id="map-sort">
-          <option value="contri">Contribution per-capita</option>
-          <option value="need">Charities in Need</option>
+          <option value="_contributions_percapita">Contribution per-capita</option>
+          <option value="_score_average">Average Charity Score</option>
+          <option value="_rank">Quality of Life</option>
+          <option value="ed_rank">Quality of Education</option>
+          <option value="en_rank">Quality of Environment</option>
+          <option value="he_rank">Quality of Health</option>
       </select>
       </div>
       <div id="legend">
@@ -132,6 +136,15 @@
           clearCensusData();
           loadCensusData(selectBox.options[selectBox.selectedIndex].value,selectBox2.options[selectBox2.selectedIndex].value);
         });
+        google.maps.event.addDomListener(selectBox2, 'change', function() {
+          clearCensusData();
+
+        if(selectBox2.options[selectBox2.selectedIndex].value.includes("_rank"))
+          selectBox.disabled=true;
+        else selectBox.disabled=false;
+          //if($("#map-sort option:selected").val() == "_rank")
+          loadCensusData(selectBox.options[selectBox.selectedIndex].value,selectBox2.options[selectBox2.selectedIndex].value);
+        });
 
         // state polygons only need to be loaded once, do them now
         loadMapShapes();
@@ -145,27 +158,42 @@
         // wait for the request to complete by listening for the first feature to be
         // added
         google.maps.event.addListenerOnce(map.data, 'addfeature', function() {
-        google.maps.event.trigger(document.getElementById('map-cate'),
-              'change');
-              // google.maps.event.trigger(document.getElementById('map-cate'),
-              // 'change');
+          google.maps.event.trigger(document.getElementById('map-cate'), 'change');
+          google.maps.event.trigger(document.getElementById('map-sort'), 'change');
         });
       }
       function loadCensusData(v1,v2) {
         // load the requested variable from the census API (using local copies)
         var xhr = new XMLHttpRequest(), v;
-        if (["score","rank"].includes(v1))
-          v = v1+score
-        else v = v1+"_contributions_percapita"
+        console.log(v1,v2)
+        var quality = false
+        switch(v2) {
+          case "_contributions_percapita":
+            v = "/get/" + v1 + v2
+            break
+          case "_score_average":
+            v = "/get/overall_score/" + v1 + v2
+            break
+          case "_rank":
+            v = "/get/rankings/total" + v2
+            break;
+          default:
+          quality = true
+            v = "/get/quality/"+v2
+        }
         
-        $.get("/get/"+v,function(data) {
+        $.get(v,function(data) {
           //censusData.shift(); // the first row contains column names
           for(let i = 0; i < data.length; i++) {
             row = data[i]
             //var censusVariable = parseFloat(row[0]);
-            var c = parseFloat(row[v]).toFixed(2), n = Number(row[v]);
+            if (quality) {
+              var c = parseFloat(51 - row[v2]).toFixed(2), n = Number(51 - row[v2]);
+            } else {
+            var c = parseFloat(row[v1+v2]).toFixed(2), n = Number(row[v1+v2]);
+            }
             var stateId = row.state;
-            if (isNaN(c) || !stateId) return
+            if (isNaN(c) || !stateId ) continue
             // keep track of min and max values
             if (n < censusMin) {
               censusMin = n;
@@ -173,6 +201,7 @@
             if (n > censusMax) {
               censusMax = n;
             }
+
             // update the existing row with the new data
             map.data
               .getFeatureById(stateId)
