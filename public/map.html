@@ -4,6 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
     <title>Mashups with google.maps.Data</title>
+
+    <script src="https://code.jquery.com/jquery-3.1.1.js"></script>
     <style>
       html, body, #map { height: 100%; margin: 0; padding: 0; overflow: hidden; }
         .nicebox {
@@ -19,10 +21,10 @@
           border: rgb(229, 229, 229) 1px solid;
         }
         #controls {
-          top: 10px;
-          left: 110px;
-          width: 360px;
-          height: 45px;
+          bottom: 10px;
+          left: 80px;
+          width: 400px;
+          height: 50px;
         }
         #data-box {
           top: 10px;
@@ -31,7 +33,7 @@
           line-height: 45px;
           display: none;
         }
-        #census-variable {
+        #map-cate #map-sort {
           width: 360px;
           height: 20px;
         }
@@ -61,13 +63,25 @@
   <body>
     <div id="controls" class="nicebox">
       <div>
-      <select id="census-variable">
-        <option value="https://storage.googleapis.com/mapsdevsite/json/DP02_0066PE">Percent of population over 25 that completed high
-        school</option>
-        <option value="https://storage.googleapis.com/mapsdevsite/json/DP05_0017E">Median age</option>
-        <option value="https://storage.googleapis.com/mapsdevsite/json/DP05_0001E">Total population</option>
-        <option value="https://storage.googleapis.com/mapsdevsite/json/DP02_0016E">Average family size</option>
-        <option value="https://storage.googleapis.com/mapsdevsite/json/DP03_0088E">Per-capita income</option>
+      <select style="width:50%;float:left;" id="map-cate">
+          <option value="total">All</option>
+          <option value="an">Animals</option>
+          <option value="at">Arts, Culture, Humanities</option>
+          <option value="cm">Community Development</option>
+          <option value="ed">Education</option>
+          <option value="en">Environment</option>
+          <option value="he">Health</option>
+          <option value="hs">Human Services</option>
+          <option value="cr">Human and Civil Rights</option>
+          <option value="in">International</option>
+          <option value="rl">Religion</option>
+          <option value="re">Research and Public Policy</option>
+          <option value="score">Average Score</option>
+          <option value="rank">Rank of Condition</option>
+      </select>
+      <select style="width:50%"  id="map-sort">
+          <option value="contri">Contribution per-capita</option>
+          <option value="need">Charities in Need</option>
       </select>
       </div>
       <div id="legend">
@@ -112,82 +126,77 @@
         map.data.addListener('mouseout', mouseOutOfRegion);
 
         // wire up the button
-        var selectBox = document.getElementById('census-variable');
+        var selectBox = document.getElementById('map-cate');
+        var selectBox2 = document.getElementById('map-sort');
         google.maps.event.addDomListener(selectBox, 'change', function() {
           clearCensusData();
-          loadCensusData(selectBox.options[selectBox.selectedIndex].value);
+          loadCensusData(selectBox.options[selectBox.selectedIndex].value,selectBox2.options[selectBox2.selectedIndex].value);
         });
 
         // state polygons only need to be loaded once, do them now
         loadMapShapes();
-
       }
 
       /** Loads the state boundary polygons from a GeoJSON source. */
       function loadMapShapes() {
         // load US state outline polygons from a GeoJson file
-        map.data.loadGeoJson('https://storage.googleapis.com/mapsdevsite/json/states.js', { idPropertyName: 'STATE' });
-
+        map.data.loadGeoJson('https://storage.googleapis.com/mapsdevsite/json/states.js', { idPropertyName: 'NAME' });
+        
         // wait for the request to complete by listening for the first feature to be
         // added
         google.maps.event.addListenerOnce(map.data, 'addfeature', function() {
-          google.maps.event.trigger(document.getElementById('census-variable'),
+        google.maps.event.trigger(document.getElementById('map-cate'),
               'change');
+              // google.maps.event.trigger(document.getElementById('map-cate'),
+              // 'change');
         });
       }
-
-      /**
-       * Loads the census data from a simulated API call to the US Census API.
-       *
-       * @param {string} variable
-       */
-      function loadCensusData(variable) {
+      function loadCensusData(v1,v2) {
         // load the requested variable from the census API (using local copies)
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', variable + '.json');
-        xhr.onload = function() {
-          var censusData = JSON.parse(xhr.responseText);
-          censusData.shift(); // the first row contains column names
-          censusData.forEach(function(row) {
-            var censusVariable = parseFloat(row[0]);
-            var stateId = row[1];
-
+        var xhr = new XMLHttpRequest(), v;
+        if (["score","rank"].includes(v1))
+          v = v1+score
+        else v = v1+"_contributions_percapita"
+        
+        $.get("/get/"+v,function(data) {
+          //censusData.shift(); // the first row contains column names
+          for(let i = 0; i < data.length; i++) {
+            row = data[i]
+            //var censusVariable = parseFloat(row[0]);
+            var c = parseFloat(row[v]).toFixed(2), n = Number(row[v]);
+            var stateId = row.state;
+            if (isNaN(c) || !stateId) return
             // keep track of min and max values
-            if (censusVariable < censusMin) {
-              censusMin = censusVariable;
+            if (n < censusMin) {
+              censusMin = n;
             }
-            if (censusVariable > censusMax) {
-              censusMax = censusVariable;
+            if (n > censusMax) {
+              censusMax = n;
             }
-
             // update the existing row with the new data
             map.data
               .getFeatureById(stateId)
-              .setProperty('census_variable', censusVariable);
-          });
-
+              .setProperty('map-cate', c);
+          }; 
           // update and display the legend
-          document.getElementById('census-min').textContent =
-              censusMin.toLocaleString();
-          document.getElementById('census-max').textContent =
-              censusMax.toLocaleString();
-        };
-        xhr.send();
+          $('#census-min').html( censusMin.toFixed(2) )
+          $('#census-max').html( censusMax.toFixed(2) )
+        })
       }
 
       /** Removes census data from each shape on the map and resets the UI. */
       function clearCensusData() {
         censusMin = Number.MAX_VALUE;
         censusMax = -Number.MAX_VALUE;
-        map.data.forEach(function(row) {
-          row.setProperty('census_variable', undefined);
-        });
+        for(let i = 0; i < map.data.length; i++) {
+          map.data[i].setProperty('map-cate', undefined);
+        }
         document.getElementById('data-box').style.display = 'none';
         document.getElementById('data-caret').style.display = 'none';
       }
 
       /**
-       * Applies a gradient style based on the 'census_variable' column.
+       * Applies a gradient style based on the 'map-cate' column.
        * This is the callback passed to data.setStyle() and is called for each row in
        * the data set.  Check out the docs for Data.StylingFunction.
        *
@@ -198,7 +207,7 @@
         var high = [151, 83, 34];   // color of largest datum
 
         // delta represents where the value sits between the min and max
-        var delta = (feature.getProperty('census_variable') - censusMin) /
+        var delta = (Number(feature.getProperty('map-cate')) - censusMin) /
             (censusMax - censusMin);
 
         var color = [];
@@ -209,8 +218,8 @@
 
         // determine whether to show this shape or not
         var showRow = true;
-        if (feature.getProperty('census_variable') == null ||
-            isNaN(feature.getProperty('census_variable'))) {
+        if (feature.getProperty('map-cate') == null ||
+            isNaN(feature.getProperty('map-cate'))) {
           showRow = false;
         }
 
@@ -238,14 +247,14 @@
         // set the hover state so the setStyle function can change the border
         e.feature.setProperty('state', 'hover');
 
-        var percent = (e.feature.getProperty('census_variable') - censusMin) /
+        var percent = (Number(e.feature.getProperty('map-cate')) - censusMin) /
             (censusMax - censusMin) * 100;
 
         // update the label
         document.getElementById('data-label').textContent =
             e.feature.getProperty('NAME');
         document.getElementById('data-value').textContent =
-            e.feature.getProperty('census_variable').toLocaleString();
+            e.feature.getProperty('map-cate').toFixed(2);
         document.getElementById('data-box').style.display = 'block';
         document.getElementById('data-caret').style.display = 'block';
         document.getElementById('data-caret').style.paddingLeft = percent + '%';
@@ -263,7 +272,7 @@
 
     </script>
     <script async defer
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBIiSX0Id6SLTmC3hZwBfKJXgbVCMX2RPk&callback=initMap">
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCp5rKk4D0k1W75O_FB-CT9YMdGLoBN360&callback=initMap">
     </script>
   </body>
 </html>
