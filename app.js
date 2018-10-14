@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const http = require('http');
 const nconf = require('nconf');
 const express = require('express');
-
+const url = require("url")
 
 var app = express()
 // Read in keys and secrets. Using nconf use can set secrets via
@@ -23,7 +23,7 @@ let uri = `mongodb://${host}:${port}`;
 if (nconf.get('mongoDatabase')) {
   uri = `${uri}/${nconf.get('mongoDatabase')}`;
 }
-var db, ips, chrt;
+var db, ips, chrt, state_data, rank;
 mongoose.connect(uri, function(err) {
     if(err) throw err;
     else console.log("connected to",uri)
@@ -36,10 +36,46 @@ mongoose.connect(uri, function(err) {
     db.on('error', console.error.bind(console, 'MongoDB connection error:'));
     // init collections
     ips = db.collection('IPs');
-    // 
     chrt = db.collection('charities');
+    state_data = db.collection('state_data');
+    rank = db.collection('rank');
 });
+//charities
+app.get("/get/charities",function(req, res) {
+    let search = req.query.organization_type,
+    op = (search)?{organization_type : {$regex : ".*"+search+".*", $options : 'i'}}:{};
+    chrt.find(op, function(err, data) {
+        if (err) {
+            res.status(500);
+            res.send('Im sorry bruh! we fkd up');
+        } else {
+            var r = data.limit(20).toArray().then((d) => {
+                res.status(200)
+                res.set('Content-Type', 'application/json');
+                res.send(JSON.stringify(d))
+                res.end()
+            });
+        }
+    })
+})
 // Get Mongoose to use the global promise library
+app.get("/get/:state_type",function(req, res) {
+    let op = {_id: false, state: true};
+    op[req.params.state_type] = true;
+    state_data.find({}, op,  function(err, data) {
+        if (err) {
+            res.status(500);
+            res.send('Im sorry bruh! we fkd up');
+        } else {
+            var r = data.toArray().then((d) => {
+                res.status(200)
+                res.set('Content-Type', 'application/json');
+                res.send(JSON.stringify(d))
+                res.end()
+            });
+        }
+    })
+})
 
 app.get("/get/state_id/:state",function(req, res) {
     chrt.find({state:req.params.state.toUpperCase()}, function(err, data) {
@@ -50,42 +86,100 @@ app.get("/get/state_id/:state",function(req, res) {
             var r = data.toArray().then((d) => {
                 res.status(200)
                 res.set('Content-Type', 'application/json');
-                console.log(d)
-                res.end(JSON.stringify(d))
+                res.send(JSON.stringify(d))
+                res.end()
             });
         }
     })
 })
 
-app.use("/",function(req,res,next) {
-    // Track every IP that has visited this site (TEST)
-    const ip = {
-    address: req.connection.remoteAddress
-    };
+app.post("/", function(req, res) {
 
-    ips.insert(ip, (err) => {
-    if (err) {
-        console.log("DB ERROR", err);
-        return
-    } else {
-        console.log("IP Data logged successfully")
-    }
-
-    // push out a range
-    let iplist = '';
-    ips.find().toArray((err, data) => {
-        if (err) {
-        throw err;
-        }
-        data.forEach((ip) => {
-        iplist += `${ip.address}; `;
-        });
-
-        // Do nothing for now
-    })
-    })
-    next()
 })
+
+app.get("/get/ranking",function(req, res) {
+    rank.find({}, function(err, data) {
+        if (err) {
+            res.status(500);
+            res.send('Im sorry bruh! we fkd up');
+        } else {
+            var r = data.toArray().then((d) => {
+                res.status(200)
+                res.set('Content-Type', 'application/json');
+                res.send(JSON.stringify(d))
+                res.end()
+            });
+        }
+    })
+})
+
+app.get("/get/state_acc",function(req, res) {
+    var a = chrt.find({},{ "_id":0, "accountability_score":1, "state":1}).toArray().then((d) => {
+        res.status(200)
+        res.set('Content-Type', 'application/json');
+        res.send(JSON.stringify(d))
+        res.end()
+    });
+    /* .then(function(err, data) {
+        if (err) {
+            res.status(500);
+            res.send('Im sorry bruh! we fkd up');
+        } else {
+            var r = data.toArray().then((d) => {
+                res.status(200)
+                res.set('Content-Type', 'application/json');
+                res.send(JSON.stringify(d))
+                res.end()
+            });
+        }
+    })*/
+})
+
+app.get("/get/states",function(req, res) {
+    chrt.find({}, function(err, data) {
+        if (err) {
+            res.status(500);
+            res.send('Im sorry bruh! we fkd up');
+        } else {
+            var r = data.toArray().then((d) => {
+                res.status(200)
+                res.set('Content-Type', 'application/json');
+                res.send(JSON.stringify(d))
+                res.end()
+            });
+        }
+    })
+})
+
+// app.use("/",function(req,res,next) {
+//     // Track every IP that has visited this site (TEST)
+//     const ip = {
+//     address: req.connection.remoteAddress
+//     };
+
+//     ips.insert(ip, (err) => {
+//     if (err) {
+//         console.log("DB ERROR", err);
+//         return
+//     } else {
+//         console.log("IP Data logged successfully")
+//     }
+
+//     // push out a range
+//     let iplist = '';
+//     ips.find().toArray((err, data) => {
+//         if (err) {
+//         throw err;
+//         }
+//         data.forEach((ip) => {
+//         iplist += `${ip.address}; `;
+//         });
+
+//         // Do nothing for now
+//     })
+//     })
+//     next()
+// })
 
 app.use(express.static('public'));
 

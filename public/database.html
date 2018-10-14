@@ -1,0 +1,146 @@
+<style>
+body{
+	font: 12px Arial,Tahoma,Helvetica,FreeSans,sans-serif;
+	text-transform: inherit;
+	color: #333;
+	background: #e7edee;
+	width: 100%;
+}
+.wrap{
+	width: 720px;
+	margin: 15px auto;
+	padding: 15px 10px;
+	background: white;
+	border: 2px solid #DBDBDB;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+}
+.title, .userName {
+  font-weight:700;
+}
+
+.comments{
+  margin-top:10px;
+}
+
+.post{
+  margin-top:10px;
+  border-bottom: 1px solid #333;
+  padding-bottom:5px;
+}
+
+.post .user{
+  font-style: italic;
+  font-weight: 600;
+}
+</style>
+<div class="wrap"> 
+<div>
+    <h1 class="title"> Filters </h1>
+
+    <div class="byUser">
+    <span class="title">All Charities : </span>
+    <select id="selUser">
+        <option value=0>All</option>
+    </select>
+    <button type="button" onclick="searchUser()">Search </button>
+    </div>
+</div>
+
+</div>
+
+<div class="wrap">
+<div class="posts">
+</div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script>
+var usersList = [];
+function status(response) {
+  //Check Promise
+  if (response.status >= 200 && response.status < 300) {
+    return Promise.resolve(response)
+  } else {
+    return Promise.reject(new Error(response.statusText))
+  }
+}
+
+function json(response) {
+  //Return JSON format
+  return response.json()
+}
+
+function getUsers(){
+  fetch('/categories.json')
+  .then(status)
+  .then(json)
+  .then(function(dataList) {
+    usersList = dataList;
+    dataList.forEach(function(data) {
+      $('#selUser').append($('<option>', { 
+        value: data,
+        text : data 
+      }));
+    });
+    getPosts("");
+  })
+  .catch(function(error) {
+    console.log('Fetch User Error :-S', error);
+  });
+  
+}
+
+function getPosts(option){
+  fetch('/get/charities' + option)
+  .then(status)
+  .then(json)
+  .then(function(dataList) {
+    $('.posts').empty();
+    dataList.forEach(function(data){
+      console.log(data)
+      var post = $('<div class="post">');
+      var user = $('<div class="user">').append('Charity Name: ', data.charity_name);
+      var title = $('<div class="title">').append('Location: ', data.city+", "+data.state);
+      
+      var body = $('<div class="body">').append("Overall Score: %"+data.overall_score+"<br>")
+          .append("Accountability Score: %"+data.total_contributions+"<br>")
+          .append("Excess/Deficit Money: "+data.excess_or_deficit_for_year+"<br>")
+          .append("Total Contributions: "+data.total_contributions+"<br>")
+          .append("<a target='_blank' href='"+data.charity_url+"'><button>Charity URL</button></a>")
+
+      var comments = $('<div class="comment" id="com' + data.id  + '">');
+      
+      $('.posts').append(post.append(user,title,body,comments));
+    });    
+  })
+  .catch(function(error) {
+    console.log('Fetch Post Error :-S', error);
+  });
+  
+}
+
+
+$(document).ready(function() {
+  //Get Post On Document Ready
+  getUsers();
+})
+
+function searchUser(){
+  var selUser = $("#selUser").val();
+  if (selUser != 0 ){
+     getPosts("?organization_type=" + selUser);
+  }
+  else{
+    getPosts("");
+  }
+  
+ 
+}
+function getUsername(id){
+ return usersList.find(function(data){
+    return data.id == id;
+  })
+  
+}
+</script>
