@@ -1,0 +1,16 @@
+{
+  "name": "charity-node",
+  "version": "0.1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "node app.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.16.4",
+    "mongoose": "^5.3.3",
+    "nconf": "^0.10.0"
+  }
+}
