@@ -28,37 +28,21 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 			 <div class="logo">
 				 <a href="index.html"><h1>Charity<span>Clarity</span></h1></a>
 			 </div>
-			 <div class="hdr-address">
-				 <div class="address1">
-					 <button>DONATE</button>
-				 </div>
-				 <div class="clearfix"></div>
-			 </div>
 			 <div class="search">
-				 <div class="search-box">
-					 <div id="sb-search" class="sb-search">
-						  <form>
-							<input class="sb-search-input" placeholder="search term..." type="search" name="search" id="search">
-							<input class="sb-search-submit" type="submit" value="">
-							<span class="sb-icon-search"> </span>
-						 </form>
+					<div class="col-md-3 join-link">
+							<a href="#">Donate</a>
 					 </div>
+					  <div class="clearfix"></div>
 				 </div>
 			 </div>
 			 <div class="clearfix"> </div>
 			 <!-- search-scripts -->
 			<script src="js/classie.js"></script>
-			<script src="js/uisearch.js"></script>
-				<script>
-					new UISearch( document.getElementById( 'sb-search' ) );
-				</script>
-			<!-- //search-scripts -->
-		 </div>
 		 <div class="top-menu">
 			 <span class="menu">MENU</span>
 			 <ul>
 			 <li class="active"><a href="index.html"><span class="glyphicon glyphicon-home" aria-hidden="true"></span>Home</a></li>
-			 <li><a href="about.html"><span class="glyphicon glyphicon-user" aria-hidden="true"></span>Charity Database</a></li>
+			 <li><a onclick="$('#dataframe').attr('src','database.html')"><span class="glyphicon glyphicon-user" aria-hidden="true"></span>Charity Database</a></li>
 			 <li><a href="shortcodes.html"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span>Methodology</a></li>
 			 <li><a href="gallery.html"><span class="glyphicon glyphicon-picture" aria-hidden="true"></span>About Us</a></li>
 			 <li><a href="contact.html"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>More</a></li>
@@ -77,7 +61,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 </div>
 <!---->
 
-<iframe src="/map.html"></iframe>
+<iframe id="dataframe" src="/map.html"></iframe>
 <!-- <div class="banner">
 	 <div class="container">			
 			<script src="js/responsiveslides.min.js"></script>

@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const http = require('http');
 const nconf = require('nconf');
 const express = require('express');
-
+const url = require("url")
 
 var app = express()
 // Read in keys and secrets. Using nconf use can set secrets via
@@ -40,6 +40,24 @@ mongoose.connect(uri, function(err) {
     state_data = db.collection('state_data');
     rank = db.collection('rank');
 });
+//charities
+app.get("/get/charities",function(req, res) {
+    let search = req.query.organization_type,
+    op = (search)?{organization_type : {$regex : ".*"+search+".*", $options : 'i'}}:{};
+    chrt.find(op, function(err, data) {
+        if (err) {
+            res.status(500);
+            res.send('Im sorry bruh! we fkd up');
+        } else {
+            var r = data.limit(20).toArray().then((d) => {
+                res.status(200)
+                res.set('Content-Type', 'application/json');
+                res.send(JSON.stringify(d))
+                res.end()
+            });
+        }
+    })
+})
 // Get Mongoose to use the global promise library
 app.get("/get/:state_type",function(req, res) {
     let op = {_id: false, state: true};
