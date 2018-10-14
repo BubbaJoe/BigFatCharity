@@ -26,14 +26,10 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 	 <div class="container">
 		 <div class="header-top">
 			 <div class="logo">
-				 <a href="index.html"><h1>Charity<span>Clarity</span></h1></a>
+				 <a href="index.html"><h1>Big Fat Charity<span>A HackDuke Project</span></h1></a>
+				 
 			 </div>
-			 <div class="search">
-					<div class="col-md-3 join-link">
-							<a href="#">Donate</a>
-					 </div>
-					  <div class="clearfix"></div>
-				 </div>
+			 <img style="float:right" width="100px" src="/images/logo.png">
 			 </div>
 			 <div class="clearfix"> </div>
 			 <!-- search-scripts -->
@@ -42,7 +38,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 			 <span class="menu">MENU</span>
 			 <ul>
 			 <li class="active"><a href="index.html"><span class="glyphicon glyphicon-home" aria-hidden="true"></span>Home</a></li>
-			 <li><a onclick="$('#dataframe').attr('src','database.html')"><span class="glyphicon glyphicon-user" aria-hidden="true"></span>Charity Database</a></li>
+			 <li><a href="about.html"><span class="glyphicon glyphicon-user" aria-hidden="true"></span>Charity Database</a></li>
 			 <li><a href="shortcodes.html"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span>Methodology</a></li>
 			 <li><a href="gallery.html"><span class="glyphicon glyphicon-picture" aria-hidden="true"></span>About Us</a></li>
 			 <li><a href="contact.html"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>More</a></li>
@@ -60,8 +56,13 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 	 </div>
 </div>
 <!---->
-
-<iframe id="dataframe" src="/map.html"></iframe>
+<style>
+iframe {
+    margin: 0 auto;
+    display: block;
+}
+</style>
+<iframe class="container" id="dataframe" src="/map.html"></iframe>
 <!-- <div class="banner">
 	 <div class="container">			
 			<script src="js/responsiveslides.min.js"></script>
@@ -141,12 +142,12 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 <!---->
 <div class="mission">
 	 <div class="container">
-		 <h3>Our Mission</h3>
+		 <h3>Google Map API</h3>
 		 <div class="mission-sec">
 			 <div class="blog-grids">
 				 <div class="col-md-6 blog1 text_grid">
-					 <h4><a href="about.html">Confidence in Giving</a></h4>
-					 <p>In an increasingly information driven world, information can be easily skewed, m0anipulated and falsified. Bıg Fat Charıty aims to provide a donation experience guided with decoded financial data to ensure the user maximum confidence in the location, use and impact of their funds.</p>
+					 <h4><a href="about.html">Contribution</a></h4>
+					 <p>This is the Contribution percapita so its normalized for the population.</p>
 				 </div>
 				 <div class="col-md-6 blog-pic">
 					  <img src="images/m2.jpg" class="img-responsive" alt="">
@@ -158,15 +159,15 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 					  <img src="images/m1.jpg" class="img-responsive" alt="">
 				 </div>
 				 <div class="col-md-6 blog1">
-					 <h4><a href="about.html">Sımple and Straıghtforward</a></h4>
-					 <p>We hope to represent the similarities and differences between the number of charitable organizations in the US on a simple, straightforward and aesthetic map.</p>
+					 <h4><a href="about.html">Average Score</a></h4>
+					 <p>Average score (Quality of charity programs) by state</p>
 				 </div>			 
 				 <div class="clearfix"></div>
 			 </div>
 			 <div class="blog-grids">
 				 <div class="col-md-6 blog1 text_grid">
-					 <h4><a href="about.html">Relıable and Trustworthy Informatıon</a></h4>
-					 </p>By gatherıng and analyzıng data, we are able to create an overall score for each charıty. Thıs allows donors to evaluate accountabılıty and transparency of the charıty they wısh to donate to.</p>
+					 <h4><a href="about.html">Quality of whatever</a></h4>
+					 </p>Shows the quality of whatever is listed out of 50. This is to tell you where is in need the most.</p>
 				 </div>
 				 <div class="col-md-6 blog-pic">
 					  <img src="images/m3.jpg" class="img-responsive" alt="">

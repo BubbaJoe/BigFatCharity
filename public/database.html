@@ -37,7 +37,7 @@ body{
 </style>
 <div class="wrap"> 
 <div>
-    <h1 class="title"> Charity Interactive Database </h1>
+    <h1 class="title"> Charity Database </h1>
 
     <div class="byUser">
     <span class="title">All Charities : </span>
@@ -103,10 +103,10 @@ function getPosts(option){
       var user = $('<div class="user">').append('Charity Name: ', data.charity_name);
       var title = $('<div class="title">').append('Location: ', data.city+", "+data.state);
       
-      var body = $('<div class="body">').append("Overall Score: %"+data.overall_score+"<br>")
-          .append("Accountability Score: %"+data.total_contributions+"<br>")
-          .append("Excess/Deficit Money: "+data.excess_or_deficit_for_year+"<br>")
-          .append("Total Contributions: "+data.total_contributions+"<br>")
+      var body = $('<div class="body">').append("Overall Score: "+data.overall_score+"%<br>")
+          .append("Total Contributions: $"+data.total_contributions+"<br>")
+          .append("Excess/Deficit Money: $"+data.excess_or_deficit_for_year+"<br>")
+          .append("Total Contributions: $"+data.total_contributions+"<br>")
           .append("<a target='_blank' href='"+data.charity_url+"'><button>Charity URL</button></a>")
 
       var comments = $('<div class="comment" id="com' + data.id  + '">');
