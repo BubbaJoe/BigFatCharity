@@ -1,4 +1,4 @@
-# [Big Fat Charity](https://devpost.com/software/big-fat-charity) - [Hack Duke 2018](https://hacknc2018.devpost.com)
+# [Big Fat Charity](https://devpost.com/software/big-fat-charity) - [Hack Duke 2018](https://hackduke-2018.devpost.com/)
 
 ## Best Financial Hack Winner at HackDuke
 
