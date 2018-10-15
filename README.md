@@ -1,8 +1,8 @@
-# [Big fat Charity](https://devpost.com/software/big-fat-charity) - [HackDuke](https://hacknc2018.devpost.com)
+# [Big Fat Charity](https://devpost.com/software/big-fat-charity) - [Hack Duke 2018](https://hacknc2018.devpost.com)
 
 ## Best Financial Hack Winner at HackDuke
 
-## How to run the app
+## How to run the Website Locally
 
 First download [Git](https://git-scm.com/downloads)
 
