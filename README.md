@@ -1,12 +1,12 @@
-# [Big fat Charity]](https://devpost.com/software/big-fat-charity) - [HackDuke]](https://hacknc2018.devpost.com)
+# [Big fat Charity](https://devpost.com/software/big-fat-charity) - [HackDuke](https://hacknc2018.devpost.com)
 
 ## Best Financial Hack Winner at HackDuke
 
 ## How to run the app
 
-First download [Git]](https://git-scm.com/downloads)
+First download [Git](https://git-scm.com/downloads)
 
-Then download [Node.js]](https://nodejs.org/en/download/)
+Then download [Node.js](https://nodejs.org/en/download/)
 
 ```git clone https://github.com/bubbajoe/BigFatCharity```
 Locally downloads the app..
