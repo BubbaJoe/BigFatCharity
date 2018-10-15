@@ -1,10 +1,25 @@
-# First download Git
-# Then download Node.JS
+# [Big fat Charity]](https://devpost.com/software/big-fat-charity) - [HackDuke]](https://hacknc2018.devpost.com)
 
-# Then go to your terminal and type in ```git clone https://github.com/bubbajoe/charity-clarity```
+## Best Financial Hack Winner at HackDuke
 
-# Then type in ```cd charity-clarity```
+## How to run the app
 
-# Then type in ```npm install```
+First download [Git]](https://git-scm.com/downloads)
 
-# Then type in ```node app```
+Then download [Node.js]](https://nodejs.org/en/download/)
+
+```git clone https://github.com/bubbajoe/BigFatCharity```
+Locally downloads the app..
+
+ ```cd BigFatCharity```
+ change directory to the app...
+
+```npm install```
+Installs all dependencies...
+
+```node app```
+Runs the sever
+
+Then go to....
+
+http://localhost:8080/

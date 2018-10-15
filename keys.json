@@ -1,7 +1,5 @@
 {
     "mongoHost": "35.221.34.212",
     "mongoPort": "27017",
-    "mongoDatabase": "charity",
-    "mongoUser": "admin",
-    "mongoPass": "password"
+    "mongoDatabase": "charity"
   }

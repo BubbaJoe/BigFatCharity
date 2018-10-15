@@ -7,14 +7,14 @@ body{
 	width: 100%;
 }
 .wrap{
-	width: 720px;
+	width: 420px;
 	margin: 15px auto;
 	padding: 15px 10px;
 	background: #333;
-	border: 2px solid white;
-	-webkit-border-radius: 5px;
-	-moz-border-radius: 5px;
-	border-radius: 5px;
+	border: 2px solid #FF008C;
+	-webkit-border-radius: 10px;
+	-moz-border-radius: 10px;
+  border-radius: 10px;
 }
 .title, .userName {
   font-weight:700;
@@ -32,12 +32,19 @@ body{
 
 .post .user{
   font-style: italic;
-  font-weight: 600;
+  font-size: 22px;
+  color: #FF008C;
+}
+
+.big {
+  font-style: bold;
+  font-size: 26px;
+  color: #FF008C;
 }
 </style>
 <div class="wrap"> 
 <div>
-    <h1 class="title"> Charity Database </h1>
+    <h1 class="big"> Charity Database </h1>
 
     <div class="byUser">
     <span class="title">Sort by: </span>
@@ -100,8 +107,8 @@ function getPosts(option){
     dataList.forEach(function(data){
       console.log(data)
       var post = $('<div style="margin: 0 auto; display: block;" class="post text-center">');
-      var user = $('<div class="user">').append('Charity Name: ', data.charity_name);
-      var title = $('<div class="title">').append('Location: ', data.city+", "+data.state);
+      var user = $('<div class="user">').append('', data.charity_name);
+      var title = $('<div class="title">').append('Location - ', data.city+((data.state == "")?", "+data.state:"")+" | Organization: "+data.organization_type);
       
       var body = $('<div class="body">').append("Overall Score: "+data.overall_score+"%<br>")
           .append("Total Contributions: $"+data.total_contributions+"<br>")

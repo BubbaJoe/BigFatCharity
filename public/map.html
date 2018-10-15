@@ -80,12 +80,12 @@
           <option value="rank">Rank of Condition</option>
       </select>
       <select style="width:50%"  id="map-sort">
-          <option value="_contributions_percapita">Contribution per-capita</option>
+          <option value="_contributions_percapita">Contribution per-capita ($)</option>
           <option value="_score_average">Average Charity Score</option>
-          <option value="_rank">Quality of Life</option>
-          <option value="ed_rank">Quality of Education</option>
-          <option value="en_rank">Quality of Environment</option>
-          <option value="he_rank">Quality of Health</option>
+          <option value="_rank">Quality of Life (X/50)</option>
+          <option value="ed_rank">Quality of Education (X/50)</option>
+          <option value="en_rank">Quality of Environment (X/50)</option>
+          <option value="he_rank">Quality of Health (X/50)</option>
       </select>
       </div>
       <div id="legend">
@@ -139,9 +139,14 @@
         google.maps.event.addDomListener(selectBox2, 'change', function() {
           clearCensusData();
 
-        if(selectBox2.options[selectBox2.selectedIndex].value.includes("_rank"))
+        if(selectBox2.options[selectBox2.selectedIndex].value.includes("_rank") ) {
           selectBox.disabled=true;
-        else selectBox.disabled=false;
+          selectBox.value="total";
+        }
+        else {
+          selectBox.disabled=false;
+          
+        }
           //if($("#map-sort option:selected").val() == "_rank")
           loadCensusData(selectBox.options[selectBox.selectedIndex].value,selectBox2.options[selectBox2.selectedIndex].value);
         });
