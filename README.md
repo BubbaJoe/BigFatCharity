@@ -1,6 +1,8 @@
 # [Big Fat Charity](https://devpost.com/software/big-fat-charity) - [Hack Duke 2018](https://hackduke-2018.devpost.com/)
 
-## Best Financial Hack Winner at HackDuke
+## :trophy: Best Financial Hack Winner at HackDuke
+
+## :trophy: Wolfram Award Top 25 at HackDuke
 
 ## How to run the Website Locally
 
