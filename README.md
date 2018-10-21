@@ -2,8 +2,6 @@
 
 ## :trophy: Best Financial Hack Winner at HackDuke
 
-## :trophy: Wolfram Award Top 25 at HackDuke
-
 ## How to run the Website Locally
 
 First download [Git](https://git-scm.com/downloads)
